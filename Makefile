@@ -71,4 +71,4 @@ dist: clean
 	ls -l dist
 
 bump:
-	bumpversion $(BUMPTYPE)
+	$(VENV)/bin/bumpversion $(BUMPTYPE)
