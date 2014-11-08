@@ -44,7 +44,7 @@ lint:
 	flake8 erroremail tests
 
 test:
-	py.test
+	${VENV}/py.test
 
 test-all:
 	tox
