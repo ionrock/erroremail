@@ -10,23 +10,30 @@ import traceback
 from cStringIO import StringIO
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from contextlib import contextmanager
 
 
 class ErrorEmail(object):
 
-    def __init__(self, config):
+    def __init__(self, config, **kw):
         self.config = config
+        self.extra_info = kw
 
     def __enter__(self):
         return self
 
-    def send_email(self, message):
+    @contextmanager
+    def mail_server(self):
         server = smtplib.SMTP(self.config['SERVER'],
                               self.config.get('PORT', 25))
+        yield server
+        server.quit()
+
+    def send_email(self, message):
         to = self.config['TO']
         frm = self.config['FROM']
-        server.sendmail(to, frm, message)
-        server.quit()
+        with self.mail_server() as server:
+            server.sendmail(to, frm, message)
 
     def get_plain_traceback(self, exc_info):
         fh = StringIO()
@@ -36,6 +43,11 @@ class ErrorEmail(object):
     def get_html_traceback(self, exc_info):
         return MIMEText(cgitb.html(exc_info), 'html')
 
+    def get_subject(self, exc_info):
+        tmpl = self.config.get('SUBJECT', 'ErrorEmail: {message}')
+        message = traceback.format_exception(*exc_info).pop().strip()
+        return tmpl.format(message=message, **self.extra_info)
+
     def create_message_from_traceback(self, exc_info):
         msg = MIMEMultipart('alternative')
 
@@ -43,16 +55,16 @@ class ErrorEmail(object):
         msg['From'] = self.config['FROM']
 
         # TODO: Make this configurable
-        msg['Subject'] = 'ErrorEmail'
+        msg['Subject'] = self.get_subject(exc_info)
 
         msg.attach(self.get_plain_traceback(exc_info))
         msg.attach(self.get_html_traceback(exc_info))
 
-        return msg.as_string()
+        return msg
 
     def __exit__(self, *args):
         if args:
             msg = self.create_message_from_traceback(args)
-            self.send_email(msg)
+            self.send_email(msg.as_string())
             return False
         return True
