@@ -1,5 +1,6 @@
 .PHONY: clean-pyc clean-build docs clean
 VENV=venv
+CHEESE=https://pypi.python.org/pypi
 
 help:
 	@echo "bootstrap - create a virtualenv and install the necessary packages for development."
@@ -12,7 +13,7 @@ help:
 	@echo "test-all - run tests on every Python version with tox"
 	@echo "coverage - check code coverage quickly with the default Python"
 	@echo "docs - generate Sphinx HTML documentation, including API docs"
-	@echo "release - package and upload a release"
+	@echo "release - package and upload a release. use `-e CHEESE=http://localpypi` to release somewhere else."
 	@echo "dist - package"
 
 bootstrap:
@@ -61,7 +62,7 @@ docs:
 	open docs/_build/html/index.html
 
 release: clean
-	python setup.py sdist upload
+	python setup.py sdist register -r ${CHEESE} upload -r ${CHEESE}
 
 dist: clean
 	python setup.py sdist
