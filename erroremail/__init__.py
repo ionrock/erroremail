@@ -31,6 +31,8 @@ class ErrorEmail(object):
 
     def send_email(self, message):
         to = self.config['TO']
+        if isinstance(to, basestring):
+            to = [to]
         frm = self.config['FROM']
         with self.mail_server() as server:
             server.sendmail(to, frm, message)
