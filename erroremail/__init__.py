@@ -35,7 +35,7 @@ class ErrorEmail(object):
             to = [to]
         frm = self.config['FROM']
         with self.mail_server() as server:
-            server.sendmail(to, frm, message)
+            server.sendmail(frm, to, message)
 
     def get_plain_traceback(self, exc_info):
         fh = StringIO()
