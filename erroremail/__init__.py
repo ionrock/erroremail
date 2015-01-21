@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Eric Larson'
 __email__ = 'eric@ionrock.org'
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 
 import cgitb
 import smtplib
