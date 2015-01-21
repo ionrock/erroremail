@@ -14,7 +14,7 @@ requirements = []
 
 setup(
     name='erroremail',
-    version='0.1.3',
+    version='0.1.4',
     description='Send an error email when an you get an exception.',
     long_description=readme,
     author='Eric Larson',
