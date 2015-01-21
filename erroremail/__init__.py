@@ -60,7 +60,7 @@ class ErrorEmail(object):
         msg.attach(self.get_plain_traceback(exc_info))
         msg.attach(self.get_html_traceback(exc_info))
 
-        return msg
+        return msg.as_string()
 
     def __exit__(self, *args):
         if args:
