@@ -67,6 +67,6 @@ class ErrorEmail(object):
     def __exit__(self, *args):
         if args:
             msg = self.create_message_from_traceback(args)
-            self.send_email(msg.as_string())
+            self.send_email(msg)
             return False
         return True
