@@ -17,6 +17,8 @@ class ErrorEmail(object):
 
     def __init__(self, config, **kw):
         self.config = config
+        if isinstance(self.config['TO'], basestring):
+            self.config['TO'] = [self.config['TO']]
         self.extra_info = kw
 
     def __enter__(self):
@@ -31,8 +33,6 @@ class ErrorEmail(object):
 
     def send_email(self, message):
         to = self.config['TO']
-        if isinstance(to, basestring):
-            to = [to]
         frm = self.config['FROM']
         with self.mail_server() as server:
             server.sendmail(frm, to, message)
